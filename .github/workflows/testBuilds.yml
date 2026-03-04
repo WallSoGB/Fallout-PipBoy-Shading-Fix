@@ -53,4 +53,5 @@ jobs:
         game_domain_name: ${{ vars.NEXUSMODS_GAME_DOMAIN }}
         filename: "artifacts\\PipBoyShadingFix-Release-${{ env.artifact_timestamp }}.zip"
         display_name: "Test upload"
+        description: "Test description"
         version: ${{ env.artifact_timestamp }}
