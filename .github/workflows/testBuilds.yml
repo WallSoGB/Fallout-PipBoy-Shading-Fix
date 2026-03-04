@@ -54,5 +54,5 @@ jobs:
         filename: "artifacts\\PipBoyShadingFix-Release-${{ env.artifact_timestamp }}.zip"
         display_name: "Test upload"
         description: "Test description"
-        file_category: "misc"
+        file_category: "miscellaneous"
         version: ${{ env.artifact_timestamp }}
