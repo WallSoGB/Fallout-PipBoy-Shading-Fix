@@ -1,0 +1,56 @@
+name: MSBuild
+
+on:
+  push:
+    branches: [ "nexus-api-test" ]
+
+env:
+  SOLUTION_FILE_PATH: PipBoyShadingFix/PipBoyShadingFix.sln
+
+permissions: write-all
+
+jobs:
+  build:
+    runs-on: windows-2025-vs2026
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build Release
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: msbuild /m /p:Configuration=Release ${{env.SOLUTION_FILE_PATH}} /p:PostBuildEventUseInBuild=false
+
+    - name: Generate Timestamp
+      run: |
+        timestamp=$(date +"%Y%m%d%H%M%S")
+        echo "artifact_timestamp=$timestamp" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Package Artifacts
+      run: |
+        $releaseDir = "PipBoyShadingFix\Release"
+        New-Item -ItemType Directory -Name artifacts -Force | Out-Null
+        New-Item -ItemType Directory -Name "nvse\plugins" -path $releaseDir -Force | Out-Null
+        Copy-Item -Path "$releaseDir\PipBoyShadingFix.dll", "$releaseDir\PipBoyShadingFix.pdb" -Destination "$releaseDir\nvse\plugins"
+        Compress-Archive -Path "$releaseDir\nvse" -DestinationPath "artifacts\PipBoyShadingFix-Release-${{ env.artifact_timestamp }}.zip"
+      shell: pwsh
+
+    - name: Publish Zipped Artifacts
+      uses: actions/upload-artifact@v6
+      with:
+        name: Zipped-Artifacts-${{ env.artifact_timestamp }}
+        path: artifacts/
+
+    - name: Upload mod to NexusMods
+      id: upload
+      uses: Nexus-Mods/upload-action@main
+      with:
+        api_key: ${{ secrets.NEXUSMODS_API_KEY }}
+        file_id: ${{ vars.NEXUSMODS_FILE_ID }}
+        game_domain_name: ${{ vars.NEXUSMODS_GAME_DOMAIN }}
+        filename: ${{ artifacts\PipBoyShadingFix-Release-${{ env.artifact_timestamp }}.zip }}
+        display_name: "Test upload"
+        version: ${{ env.artifact_timestamp }}
