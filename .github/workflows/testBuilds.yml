@@ -51,6 +51,6 @@ jobs:
         api_key: ${{ secrets.NEXUSMODS_API_KEY }}
         file_id: ${{ vars.NEXUSMODS_FILE_ID }}
         game_domain_name: ${{ vars.NEXUSMODS_GAME_DOMAIN }}
-        filename: ${{ artifacts\PipBoyShadingFix-Release-${{ env.artifact_timestamp }}.zip }}
+        filename: "artifacts\\PipBoyShadingFix-Release-${{ env.artifact_timestamp }}.zip"
         display_name: "Test upload"
         version: ${{ env.artifact_timestamp }}
