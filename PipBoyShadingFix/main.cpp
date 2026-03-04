@@ -30,7 +30,7 @@ bool NVSEPlugin_Query(const NVSEInterface* nvse, PluginInfo* info)
 {
 	info->infoVersion = PluginInfo::kInfoVersion;
 	info->name = "PipBoyShadingFix";
-	info->version = 2;
+	info->version = 3;
 
 	return true;
 }
